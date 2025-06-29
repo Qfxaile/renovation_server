@@ -50,7 +50,7 @@ exports.updateDynamicExpense = async (req, res) => {
         const id = req.params.id;
         const updateData = req.body;
         console.log('🔧 正在更新其他支出:', { id, updateData });
-        await OtherExpenses.updateDynamicExpense(id, updateData);
+        await OtherExpenses.update(id, updateData);
         res.json({ message: '其他支出更新成功' });
     } catch (err) {
         console.error('❌ 更新其他支出失败:', err);
