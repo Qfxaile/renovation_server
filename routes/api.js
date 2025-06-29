@@ -1,18 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middlewares/auth');
-const recordController = require('../controllers/recordController');
+const projectController = require('../controllers/ProjectController');
 
-// 用户认证路由
-router.post('/login', (req, res) => {
-  // 实际实现中需要验证用户名密码
-  const token = jwt.sign({ id: 1 }, process.env.JWT_SECRET, { expiresIn: '7d' });
-  res.json({ token });
-});
+// 项目相关路由
+router.route('/projects')
+  .get(projectController.getAllProjects)
+  .post(projectController.createProject);
 
-// 需要认证的路由
-router.use(auth);
-router.post('/records', recordController.createRecord);
-router.get('/records', recordController.getRecords);
+router.route('/projects/:id')
+  .get(projectController.getProjectById)
+  .put(projectController.updateProject)
+  .delete(projectController.deleteProject);
+
+router.get('/hello', (req, res) => res.json({ message: 'Hello World!' }))
 
 module.exports = router;
