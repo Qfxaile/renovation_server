@@ -66,12 +66,12 @@ router.route('/other-expenses/project/:projectId')
 
 router.route('/other-expenses/:id')
   .get(otherExpensesController.getOtherExpenseById)
-  .put(otherExpensesController.updateOtherExpense)
+  .put(otherExpensesController.updateDynamicExpense)
   .delete(otherExpensesController.deleteOtherExpense);
 
 // ProjectSummary API
 router.route('/project-summary')
-  .get(projectSummaryController.getAllProjectSummaries)
+  .get(projectSummaryController.getProjectSummary)
   .post(projectSummaryController.createProjectSummary);
 
 router.route('/project-summary/:id')
