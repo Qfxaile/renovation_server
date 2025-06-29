@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const projectController = require('../controllers/ProjectController');
+const authController = require('../controllers/AuthController');
 
-// 项目相关路由
+router.post('/auth/login', (req, res) => authController.login(req, res));
+
 router.route('/projects')
   .get(projectController.getAllProjects)
   .post(projectController.createProject);

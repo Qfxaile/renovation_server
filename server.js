@@ -4,7 +4,6 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const pool = require('./config/db');
 const auth = require('./middlewares/auth');
-const apiRoutes = require('./routes/api');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -22,8 +21,13 @@ pool.getConnection()
     })
     .catch(err => console.error('数据库连接失败:', err));
 
-// 路由
-app.use('/api', auth, apiRoutes);
+// 不需要认证的路由
+const authRoutes = require('./routes/auth');
+app.use('/api/auth', authRoutes); // 不经过 auth 中间件
+
+// 需要认证的其他路由
+const apiRoutes = require('./routes/api');
+app.use('/api', auth, apiRoutes); // 经过 auth 中间件
 
 // 错误处理
 app.use(errorHandler);
