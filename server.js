@@ -13,7 +13,7 @@ const port = process.env.PORT || 3000;
 // 中间件
 app.use(cors());
 app.use(bodyParser.json());
-app.use(auth);
+app.use(auth)
 
 // 测试数据库连接
 pool.getConnection()
