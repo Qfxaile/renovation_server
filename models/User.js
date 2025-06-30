@@ -16,6 +16,11 @@ const User = {
         return rows[0];
     },
 
+    getByRole: async (role) => {
+        const [rows] = await pool.query('SELECT * FROM Users WHERE Role = ?', [role]);
+        return rows;
+    },
+    
     create: async (data) => {
         const { Username, Password, Role } = data;
         const [result] = await pool.query(

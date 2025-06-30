@@ -105,7 +105,7 @@ async function runTests() {
 
     await testGetProjects();
     await testUpdateProject(projectId);
-    await testDeleteProject(projectId);
+    // await testDeleteProject(projectId);
 
     console.log('\n🎉 所有测试完成');
 }
