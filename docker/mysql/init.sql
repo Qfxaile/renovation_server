@@ -1,10 +1,22 @@
 -- 创建数据库
-CREATE DATABASE IF NOT EXISTS renonation_db 
-CHARACTER SET utf8mb4 
-COLLATE utf8mb4_general_ci;
+CREATE DATABASE IF NOT EXISTS renonation_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 -- 使用这个数据库
 USE renonation_db;
+
+-- 创建用户表
+CREATE TABLE IF NOT EXISTS Users (
+    UserID INT AUTO_INCREMENT PRIMARY KEY COMMENT '用户ID',
+    Username VARCHAR(100) NOT NULL UNIQUE COMMENT '用户名',
+    Password VARCHAR(255) NOT NULL COMMENT '密码',
+    Role VARCHAR(50) NOT NULL COMMENT '角色（如：admin, user）',
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
+);
+
+-- 插入默认管理员账号
+INSERT INTO
+    Users (Username, Password, Role)
+VALUES ('admin', 'admin123', 'admin');
 
 -- 创建工程表
 CREATE TABLE IF NOT EXISTS Projects (
@@ -27,7 +39,7 @@ CREATE TABLE IF NOT EXISTS Income (
     PaymentMethod VARCHAR(100) COMMENT '付款方式',
     Amount DECIMAL(15, 2) DEFAULT 0.00 COMMENT '收款金额',
     Notes TEXT COMMENT '备注',
-    FOREIGN KEY (ProjectID) REFERENCES Projects(ProjectID) ON DELETE CASCADE
+    FOREIGN KEY (ProjectID) REFERENCES Projects (ProjectID) ON DELETE CASCADE
 );
 
 -- 创建材料明细表
@@ -41,7 +53,7 @@ CREATE TABLE IF NOT EXISTS Materials (
     UnitPrice DECIMAL(15, 2) DEFAULT 0.00 COMMENT '单价',
     TotalAmount DECIMAL(15, 2) DEFAULT 0.00 COMMENT '总金额',
     Notes TEXT COMMENT '备注',
-    FOREIGN KEY (ProjectID) REFERENCES Projects(ProjectID) ON DELETE CASCADE
+    FOREIGN KEY (ProjectID) REFERENCES Projects (ProjectID) ON DELETE CASCADE
 );
 
 -- 创建工人工资表
@@ -56,7 +68,7 @@ CREATE TABLE IF NOT EXISTS Labor (
     DaysWorked DECIMAL(5, 2) DEFAULT 0.00 COMMENT '工作天数',
     TotalWage DECIMAL(15, 2) DEFAULT 0.00 COMMENT '总工资',
     Notes TEXT COMMENT '备注',
-    FOREIGN KEY (ProjectID) REFERENCES Projects(ProjectID) ON DELETE CASCADE
+    FOREIGN KEY (ProjectID) REFERENCES Projects (ProjectID) ON DELETE CASCADE
 );
 
 -- 创建其他支出记录表
@@ -68,7 +80,7 @@ CREATE TABLE IF NOT EXISTS OtherExpenses (
     ExpenseDescription TEXT NOT NULL COMMENT '支出明细',
     Amount DECIMAL(15, 2) DEFAULT 0.00 COMMENT '金额',
     Notes TEXT COMMENT '备注',
-    FOREIGN KEY (ProjectID) REFERENCES Projects(ProjectID) ON DELETE CASCADE
+    FOREIGN KEY (ProjectID) REFERENCES Projects (ProjectID) ON DELETE CASCADE
 );
 
 -- 创建工程总账单
@@ -83,5 +95,5 @@ CREATE TABLE IF NOT EXISTS ProjectSummary (
     TotalExpenses DECIMAL(15, 2) DEFAULT 0.00 COMMENT '总支出',
     TotalIncome DECIMAL(15, 2) DEFAULT 0.00 COMMENT '总收入',
     TotalProfit DECIMAL(15, 2) DEFAULT 0.00 COMMENT '利润总额',
-    FOREIGN KEY (ProjectID) REFERENCES Projects(ProjectID) ON DELETE CASCADE
+    FOREIGN KEY (ProjectID) REFERENCES Projects (ProjectID) ON DELETE CASCADE
 );

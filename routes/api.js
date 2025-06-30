@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const projectController = require('../controllers/ProjectController');
 const incomeController = require('../controllers/IncomeController');
-const materialsController = require('../controllers/MaterialsController');
+const materialsController = require('../controllers/MaterialController');
 const laborController = require('../controllers/LaborController');
-const otherExpensesController = require('../controllers/OtherExpensesController');
+const otherExpensesController = require('../controllers/OtherExpenseController');
 const projectSummaryController = require('../controllers/ProjectSummaryController');
 
 // Project API

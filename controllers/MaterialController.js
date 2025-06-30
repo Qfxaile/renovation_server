@@ -1,4 +1,4 @@
-const Materials = require('../models/Materials');
+const Materials = require('../models/Material');
 
 exports.getAllMaterials = async (req, res) => {
     try {

@@ -1,4 +1,4 @@
-const OtherExpenses = require('../models/OtherExpenses');
+const OtherExpenses = require('../models/OtherExpense');
 
 exports.getAllOtherExpenses = async (req, res) => {
     try {

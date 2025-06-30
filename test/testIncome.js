@@ -16,7 +16,7 @@ async function login() {
     try {
         const response = await apiClient.post('/auth/login', {
             username: 'admin',
-            password: 'password123'
+            password: 'admin123'
         });
 
         authToken = response.data.token;
