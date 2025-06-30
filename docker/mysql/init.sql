@@ -13,11 +13,6 @@ CREATE TABLE IF NOT EXISTS Users (
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
 );
 
--- 插入默认管理员账号
-INSERT INTO
-    Users (Username, Password, Role)
-VALUES ('admin', 'admin123', 'admin');
-
 -- 创建工程表
 CREATE TABLE IF NOT EXISTS Projects (
     ProjectID INT AUTO_INCREMENT PRIMARY KEY COMMENT '项目ID',

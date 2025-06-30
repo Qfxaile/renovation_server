@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const pool = require('./config/db');
 const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/errorHandler');
+const initializeDatabase = require('./utils/initDB');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -20,6 +21,9 @@ pool.getConnection()
         conn.release();
     })
     .catch(err => console.error('数据库连接失败:', err));
+
+// 执行初始化数据库
+initializeDatabase();
 
 // 不需要认证的路由
 const authRoutes = require('./routes/auth');
