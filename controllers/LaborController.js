@@ -1,10 +1,18 @@
 const Labor = require('../models/Labor');
+const formatDate = require('../utils/dateUtils');
 
 exports.getAllLaborRecords = async (req, res) => {
     try {
         console.log('🔍 正在获取所有工资记录');
         const laborRecords = await Labor.getAll();
-        res.json(laborRecords);
+        
+        // 格式化所有工资记录中的工作日期
+        const formattedLaborRecords = laborRecords.map(record => ({
+            ...record,
+            WorkDate: formatDate(new Date(record.WorkDate))
+        }));
+        
+        res.json(formattedLaborRecords);
     } catch (err) {
         console.error('❌ 获取工资记录列表失败:', err);
         res.status(500).json({ error: '获取工资记录列表失败' });

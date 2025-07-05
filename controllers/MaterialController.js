@@ -1,10 +1,18 @@
 const Materials = require('../models/Material');
+const formatDate = require('../utils/dateUtils');
 
 exports.getAllMaterials = async (req, res) => {
     try {
         console.log('🔍 正在获取所有材料');
         const materials = await Materials.getAll();
-        res.json(materials);
+        
+        // 格式化所有材料记录中的日期
+        const formattedMaterials = materials.map(material => ({
+            ...material,
+            Date: formatDate(new Date(material.Date))
+        }));
+        
+        res.json(formattedMaterials);
     } catch (err) {
         console.error('❌ 获取材料列表失败:', err);
         res.status(500).json({ error: '获取材料列表失败' });

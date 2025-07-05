@@ -1,10 +1,18 @@
 const Income = require('../models/Income');
+const formatDate = require('../utils/dateUtils');
 
 exports.getAllIncomes = async (req, res) => {
     try {
         console.log('🔍 正在获取所有收入');
         const incomes = await Income.getAll();
-        res.json(incomes);
+        
+        // 格式化所有收入记录中的日期
+        const formattedIncomes = incomes.map(income => ({
+            ...income,
+            Date: formatDate(new Date(income.Date))
+        }));
+        
+        res.json(formattedIncomes);
     } catch (err) {
         console.error('❌ 获取收入列表失败:', err);
         res.status(500).json({ error: '获取收入列表失败' });

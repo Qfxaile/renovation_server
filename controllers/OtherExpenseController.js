@@ -1,10 +1,18 @@
 const OtherExpenses = require('../models/OtherExpense');
+const formatDate = require('../utils/dateUtils');
 
 exports.getAllOtherExpenses = async (req, res) => {
     try {
         console.log('🔍 正在获取所有其他支出');
         const otherExpenses = await OtherExpenses.getAll();
-        res.json(otherExpenses);
+        
+        // 格式化所有其他支出记录中的日期
+        const formattedOtherExpenses = otherExpenses.map(expense => ({
+            ...expense,
+            Date: formatDate(new Date(expense.Date))
+        }));
+        
+        res.json(formattedOtherExpenses);
     } catch (err) {
         console.error('❌ 获取其他支出列表失败:', err);
         res.status(500).json({ error: '获取其他支出列表失败' });

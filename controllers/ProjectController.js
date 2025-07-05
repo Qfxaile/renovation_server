@@ -1,10 +1,19 @@
 const Project = require('../models/Project');
+const formatDate = require('../utils/dateUtils');
 
 exports.getAllProjects = async (req, res) => {
   try {
     console.log('🔍 正在获取所有项目'); // 添加日志输出
     const projects = await Project.getAll();
-    res.json(projects);
+    
+    // 格式化所有项目中的日期
+    const formattedProjects = projects.map(project => ({
+      ...project,
+      StartDate: formatDate(new Date(project.StartDate)),
+      EndDate: formatDate(new Date(project.EndDate))
+    }));
+    
+    res.json(formattedProjects);
   } catch (err) {
     console.error('❌ 获取项目列表失败:', err); // 打印完整错误堆栈
     res.status(500).json({ error: '获取项目列表失败' });
@@ -16,7 +25,15 @@ exports.getProjectById = async (req, res) => {
     console.log(`🔍 正在获取项目详情: ${req.params.id}`); // 添加日志输出
     const project = await Project.getById(req.params.id);
     if (!project) return res.status(404).json({ error: '项目未找到' });
-    res.json(project);
+    
+    // 格式化日期
+    const formattedProject = {
+      ...project,
+      StartDate: formatDate(new Date(project.StartDate)),
+      EndDate: formatDate(new Date(project.EndDate))
+    };
+    
+    res.json(formattedProject);
   } catch (err) {
     console.error(`❌ 获取项目失败: ${req.params.id}`, err); // 打印完整错误堆栈
     res.status(500).json({ error: '获取项目失败' });
