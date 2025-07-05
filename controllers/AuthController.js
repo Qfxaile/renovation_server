@@ -22,7 +22,6 @@ exports.login = async (req, res) => {
     if (isPasswordValid) {
       // 生成JWT令牌
       const token = jwt.sign({ id: user.UserID, username: user.Username }, process.env.JWT_SECRET, {
-        expiresIn: '1h'
       });
       console.log('登录成功:', { username: user.Username }); // 添加登录成功日志
 
@@ -34,5 +33,21 @@ exports.login = async (req, res) => {
   } catch (error) {
     console.error('登录处理错误:', error);
     res.status(500).json({ message: '服务器内部错误' });
+  }
+};
+
+exports.verify = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ valid: false, message: '无效的授权头' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.json({ valid: true, decoded });
+  } catch (error) {
+    res.status(401).json({ valid: false, message: '无效的令牌' });
   }
 };
