@@ -18,14 +18,21 @@ const Project = {
         return result.insertId;
     },
     update: async (id, data) => {
-        const fields = Object.keys(data)
-            .filter(key => data[key] !== undefined && data[key] !== null)
+        const updateData = { ...data };
+        if (updateData.StartDate === '') {
+          updateData.StartDate = null;
+        }
+        if (updateData.EndDate === '') {
+          updateData.EndDate = null;
+        }
+        const fields = Object.keys(updateData)
+            .filter(key => updateData[key] !== undefined && updateData[key] !== null)
             .map(key => `${key} = ?`)
             .join(', ');
 
-        const values = Object.keys(data)
-            .filter(key => data[key] !== undefined && data[key] !== null)
-            .map(key => data[key]);
+        const values = Object.keys(updateData)
+            .filter(key => updateData[key] !== undefined && updateData[key] !== null)
+            .map(key => updateData[key]);
 
         if (!fields) {
             throw new Error('没有可更新的数据');

@@ -9,8 +9,8 @@ exports.getAllProjects = async (req, res) => {
     // 格式化所有项目中的日期
     const formattedProjects = projects.map(project => ({
       ...project,
-      StartDate: formatDate(new Date(project.StartDate)),
-      EndDate: formatDate(new Date(project.EndDate))
+      StartDate: project.StartDate ? formatDate(new Date(project.StartDate)) : '',
+      EndDate: project.EndDate ? formatDate(new Date(project.EndDate)) : ''
     }));
     
     res.json(formattedProjects);
@@ -29,8 +29,8 @@ exports.getProjectById = async (req, res) => {
     // 格式化日期
     const formattedProject = {
       ...project,
-      StartDate: formatDate(new Date(project.StartDate)),
-      EndDate: formatDate(new Date(project.EndDate))
+      StartDate: project.StartDate ? formatDate(new Date(project.StartDate)) : '',
+      EndDate: project.EndDate ? formatDate(new Date(project.EndDate)) : ''
     };
     
     res.json(formattedProject);
