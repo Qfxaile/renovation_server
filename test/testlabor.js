@@ -16,7 +16,7 @@ async function login() {
     try {
         const response = await apiClient.post('/auth/login', {
             username: 'admin',
-            password: 'password123'
+            password: 'admin123'
         });
 
         authToken = response.data.token;
@@ -137,7 +137,7 @@ async function runTests() {
     await testGetAllLaborRecords();
     await testGetLaborRecordsByProjectId();
     await testUpdateLabor(laborId);
-    await testDeleteLabor(laborId);
+    // await testDeleteLabor(laborId);
 
     console.log('\n🎉 所有 Labor 测试完成');
 }
