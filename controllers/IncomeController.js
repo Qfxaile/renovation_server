@@ -9,7 +9,7 @@ exports.getAllIncomes = async (req, res) => {
         // 格式化所有收入记录中的日期
         const formattedIncomes = incomes.map(income => ({
             ...income,
-            Date: formatDate(new Date(income.Date))
+            Date: income.Date ? formatDate(new Date(income.Date)) : '',
         }));
         
         res.json(formattedIncomes);
@@ -23,7 +23,14 @@ exports.getIncomesByProjectId = async (req, res) => {
     try {
         console.log(`🔍 正在获取项目 ${req.params.projectId} 的收入`);
         const incomes = await Income.getAllByProjectId(req.params.projectId);
-        res.json(incomes);
+        
+        // 格式化所有收入记录中的日期
+        const formattedIncomes = incomes.map(income => ({
+            ...income,
+            Date: income.Date ? formatDate(new Date(income.Date)) : ''
+        }));
+        
+        res.json(formattedIncomes);
     } catch (err) {
         console.error(`❌ 获取项目收入失败: ${req.params.projectId}`, err);
         res.status(500).json({ error: '获取项目收入失败' });
@@ -35,7 +42,14 @@ exports.getIncomeById = async (req, res) => {
         console.log(`🔍 正在获取收入详情: ${req.params.id}`);
         const income = await Income.getById(req.params.id);
         if (!income) return res.status(404).json({ error: '收入记录未找到' });
-        res.json(income);
+        
+        // 格式化日期
+        const formattedIncome = {
+            ...income,
+            Date: income.Date ? formatDate(new Date(income.Date)) : '',
+        };
+        
+        res.json(formattedIncome);
     } catch (err) {
         console.error(`❌ 获取收入失败: ${req.params.id}`, err);
         res.status(500).json({ error: '获取收入失败' });

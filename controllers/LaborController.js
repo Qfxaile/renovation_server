@@ -9,7 +9,7 @@ exports.getAllLaborRecords = async (req, res) => {
         // 格式化所有工资记录中的工作日期
         const formattedLaborRecords = laborRecords.map(record => ({
             ...record,
-            WorkDate: formatDate(new Date(record.WorkDate))
+            WorkDate: record.WorkDate ? formatDate(new Date(record.WorkDate)) : ''
         }));
         
         res.json(formattedLaborRecords);
@@ -23,7 +23,14 @@ exports.getLaborRecordsByProjectId = async (req, res) => {
     try {
         console.log(`🔍 正在获取项目 ${req.params.projectId} 的工资记录`);
         const laborRecords = await Labor.getAllByProjectId(req.params.projectId);
-        res.json(laborRecords);
+        
+        // 格式化所有工资记录中的工作日期
+        const formattedLaborRecords = laborRecords.map(record => ({
+            ...record,
+            WorkDate: record.WorkDate ? formatDate(new Date(record.WorkDate)) : ''
+        }));
+        
+        res.json(formattedLaborRecords);
     } catch (err) {
         console.error(`❌ 获取项目工资记录失败: ${req.params.projectId}`, err);
         res.status(500).json({ error: '获取项目工资记录失败' });
@@ -35,7 +42,14 @@ exports.getLaborRecordById = async (req, res) => {
         console.log(`🔍 正在获取工资记录详情: ${req.params.id}`);
         const laborRecord = await Labor.getById(req.params.id);
         if (!laborRecord) return res.status(404).json({ error: '工资记录未找到' });
-        res.json(laborRecord);
+        
+        // 格式化工作日期
+        const formattedLaborRecord = {
+            ...laborRecord,
+            WorkDate: laborRecord.WorkDate ? formatDate(new Date(laborRecord.WorkDate)) : ''
+        };
+        
+        res.json(formattedLaborRecord);
     } catch (err) {
         console.error(`❌ 获取工资记录失败: ${req.params.id}`, err);
         res.status(500).json({ error: '获取工资记录失败' });

@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // { id: user_id }
-    console.log('认证成功:', { user: req.user }); // 添加认证成功日志
+    // console.log('认证成功:', { user: req.user }); // 添加认证成功日志
     next();
   } catch (err) {
     console.error('认证失败:', '无效的令牌'); // 添加认证失败日志

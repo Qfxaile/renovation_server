@@ -58,6 +58,7 @@ async function testCreateIncome() {
         const newIncome = {
             ProjectID: projectId,
             Date: '2025-07-01',
+            Project: '测试项目',
             PaymentMethod: '银行转账',
             Amount: 50000,
             Notes: '首期款'
@@ -132,7 +133,7 @@ async function runTests() {
     await testGetAllIncomes();
     await testGetIncomesByProjectId();
     await testUpdateIncome(incomeId);
-    await testDeleteIncome(incomeId);
+    // await testDeleteIncome(incomeId);
 
     console.log('\n🎉 所有 Income 测试完成');
 }

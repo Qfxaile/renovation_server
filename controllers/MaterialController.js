@@ -9,7 +9,7 @@ exports.getAllMaterials = async (req, res) => {
         // 格式化所有材料记录中的日期
         const formattedMaterials = materials.map(material => ({
             ...material,
-            Date: formatDate(new Date(material.Date))
+            Date: material.Date ? formatDate(new Date(material.Date)) : ''
         }));
         
         res.json(formattedMaterials);
@@ -23,7 +23,14 @@ exports.getMaterialsByProjectId = async (req, res) => {
     try {
         console.log(`🔍 正在获取项目 ${req.params.projectId} 的材料`);
         const materials = await Materials.getAllByProjectId(req.params.projectId);
-        res.json(materials);
+        
+        // 格式化所有材料记录中的日期
+        const formattedMaterials = materials.map(material => ({
+            ...material,
+            Date: material.Date ? formatDate(new Date(material.Date)) : ''
+        }));
+        
+        res.json(formattedMaterials);
     } catch (err) {
         console.error(`❌ 获取项目材料失败: ${req.params.projectId}`, err);
         res.status(500).json({ error: '获取项目材料失败' });
@@ -35,7 +42,14 @@ exports.getMaterialById = async (req, res) => {
         console.log(`🔍 正在获取材料详情: ${req.params.id}`);
         const material = await Materials.getById(req.params.id);
         if (!material) return res.status(404).json({ error: '材料记录未找到' });
-        res.json(material);
+        
+        // 格式化日期
+        const formattedMaterial = {
+            ...material,
+            Date: material.Date ? formatDate(new Date(material.Date)) : ''
+        };
+        
+        res.json(formattedMaterial);
     } catch (err) {
         console.error(`❌ 获取材料失败: ${req.params.id}`, err);
         res.status(500).json({ error: '获取材料失败' });

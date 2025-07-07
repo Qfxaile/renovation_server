@@ -9,7 +9,7 @@ exports.getAllOtherExpenses = async (req, res) => {
         // 格式化所有其他支出记录中的日期
         const formattedOtherExpenses = otherExpenses.map(expense => ({
             ...expense,
-            Date: formatDate(new Date(expense.Date))
+            Date: expense.Date ? formatDate(new Date(expense.Date)) : ''
         }));
         
         res.json(formattedOtherExpenses);
@@ -23,7 +23,14 @@ exports.getOtherExpensesByProjectId = async (req, res) => {
     try {
         console.log(`🔍 正在获取项目 ${req.params.projectId} 的其他支出`);
         const otherExpenses = await OtherExpenses.getAllByProjectId(req.params.projectId);
-        res.json(otherExpenses);
+        
+        // 格式化所有其他支出记录中的日期
+        const formattedOtherExpenses = otherExpenses.map(expense => ({
+            ...expense,
+            Date: expense.Date ? formatDate(new Date(expense.Date)) : ''
+        }));
+        
+        res.json(formattedOtherExpenses);
     } catch (err) {
         console.error(`❌ 获取项目其他支出失败: ${req.params.projectId}`, err);
         res.status(500).json({ error: '获取项目其他支出失败' });
@@ -35,7 +42,14 @@ exports.getOtherExpenseById = async (req, res) => {
         console.log(`🔍 正在获取其他支出详情: ${req.params.id}`);
         const otherExpense = await OtherExpenses.getById(req.params.id);
         if (!otherExpense) return res.status(404).json({ error: '其他支出记录未找到' });
-        res.json(otherExpense);
+        
+        // 格式化日期
+        const formattedOtherExpense = {
+            ...otherExpense,
+            Date: otherExpense.Date ? formatDate(new Date(otherExpense.Date)) : ''
+        };
+        
+        res.json(formattedOtherExpense);
     } catch (err) {
         console.error(`❌ 获取其他支出失败: ${req.params.id}`, err);
         res.status(500).json({ error: '获取其他支出失败' });

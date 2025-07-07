@@ -14,10 +14,10 @@ const Income = {
         return rows[0];
     },
     create: async (data) => {
-        const { ProjectID, Date, PaymentMethod, Amount, Notes } = data;
+        const { ProjectID, Date, Project, PaymentMethod, Amount, Notes } = data;
         const [result] = await pool.query(
-            'INSERT INTO Income (ProjectID, Date, PaymentMethod, Amount, Notes) VALUES (?, ?, ?, ?, ?)',
-            [ProjectID, Date, PaymentMethod, Amount, Notes]
+            'INSERT INTO Income (ProjectID, Date, Project, PaymentMethod, Amount, Notes) VALUES (?, ?, ?, ?, ?, ?)',
+            [ProjectID, Date, Project, PaymentMethod, Amount, Notes]
         );
         return result.insertId;
     },
@@ -37,6 +37,7 @@ const Income = {
 
         values.push(id);
 
+        // 确保更新语句包含项目名称字段
         const [result] = await pool.query(
             `UPDATE Income SET ${fields} WHERE IncomeID = ?`,
             values
