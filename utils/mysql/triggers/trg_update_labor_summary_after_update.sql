@@ -31,7 +31,13 @@ BEGIN
         CarpenterWages = IFNULL(total_carpenter_wages, 0),
         MasonWages = IFNULL(total_mason_wages, 0),
         PainterWages = IFNULL(total_painter_wages, 0),
-        TotalExpenses = IFNULL(total_electrician_wages, 0) + IFNULL(total_carpenter_wages, 0) + IFNULL(total_mason_wages, 0) + IFNULL(total_painter_wages, 0) + IFNULL((SELECT OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = NEW.ProjectID), 0),
-        TotalProfit = IFNULL((SELECT TotalIncome FROM ProjectSummary WHERE ProjectID = NEW.ProjectID), 0) - (IFNULL(total_electrician_wages, 0) + IFNULL(total_carpenter_wages, 0) + IFNULL(total_mason_wages, 0) + IFNULL(total_painter_wages, 0) + IFNULL((SELECT OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = NEW.ProjectID), 0))
+        TotalExpenses = IFNULL(total_electrician_wages, 0) + IFNULL(total_carpenter_wages, 0) + IFNULL(total_mason_wages, 0) + IFNULL(total_painter_wages, 0) + (
+            SELECT IFNULL(OtherExpensesTotal, 0) FROM (SELECT OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = NEW.ProjectID) AS tmp
+        ),
+        TotalProfit = IFNULL((SELECT IFNULL(TotalIncome, 0) FROM (SELECT TotalIncome FROM ProjectSummary WHERE ProjectID = NEW.ProjectID) AS tmp2), 0) - (
+            IFNULL(total_electrician_wages, 0) + IFNULL(total_carpenter_wages, 0) + IFNULL(total_mason_wages, 0) + IFNULL(total_painter_wages, 0) + (
+                SELECT IFNULL(OtherExpensesTotal, 0) FROM (SELECT OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = NEW.ProjectID) AS tmp
+            )
+        )
     WHERE ProjectID = NEW.ProjectID;
 END;

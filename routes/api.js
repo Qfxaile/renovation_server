@@ -72,10 +72,7 @@ router.route('/other-expenses/:id')
 // ProjectSummary API
 router.route('/project-summary')
   .get(projectSummaryController.getProjectSummary)
-  .post(projectSummaryController.createProjectSummary);
 
 router.route('/project-summary/:id')
   .get(projectSummaryController.getProjectSummaryById)
-  .put(projectSummaryController.updateProjectSummary)
-  .delete(projectSummaryController.deleteProjectSummary);
 module.exports = router;
