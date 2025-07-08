@@ -11,6 +11,57 @@ const sqlStatements = fs.readFileSync(sqlFilePath, 'utf8')
     .split(';')
     .filter(stmt => stmt.trim());
 
+// 读取 drop_triggers.sql 文件内容
+const dropTriggersFilePath = path.resolve(__dirname, 'mysql', 'triggers', 'drop_triggers.sql');
+let dropTriggersStatements = [];
+
+if (fs.existsSync(dropTriggersFilePath)) {
+    try {
+        const dropTriggersContent = fs.readFileSync(dropTriggersFilePath, 'utf8');
+        dropTriggersStatements = dropTriggersContent.split(';')
+            .map(stmt => stmt.trim())
+            .filter(stmt => stmt);
+        
+        console.log(`✅ 成功加载 ${dropTriggersStatements.length} 条删除触发器语句`);
+    } catch (error) {
+        console.error(`❌ 读取 drop_triggers.sql 文件失败: ${error.message}`);
+    }
+} else {
+    console.warn('⚠️ drop_triggers.sql 文件不存在，跳过删除现有触发器步骤');
+}
+
+// 读取 triggers 目录下的所有 SQL 文件
+const triggerDirPath = path.resolve(__dirname, 'mysql', 'triggers');
+let triggerStatements = [];
+let triggerFileCount = 0;
+
+if (fs.existsSync(triggerDirPath)) {
+    const allFiles = fs.readdirSync(triggerDirPath);
+    const triggerFiles = allFiles.filter(file => file.endsWith('.sql') && file !== 'drop_triggers.sql');
+    triggerFileCount = triggerFiles.length;
+    
+    console.log(`🔍 在触发器目录中找到 ${triggerFileCount} 个SQL文件`);
+    
+    if (triggerFileCount === 0) {
+        console.log('⚠️ 触发器目录中没有找到SQL文件');
+    }
+    
+    for (const file of triggerFiles) {
+        const filePath = path.join(triggerDirPath, file);
+        try {
+            const sqlContent = fs.readFileSync(filePath, 'utf8');
+            // 添加文件名注释到SQL内容开头
+            const sqlWithComment = `-- File: ${file}\n${sqlContent}`;
+            triggerStatements.push(sqlWithComment);
+            console.log(`✅ 已加载触发器文件: ${file}`);
+        } catch (error) {
+            console.error(`❌ 读取触发器文件 ${file} 失败: ${error.message}`);
+        }
+    }
+} else {
+    console.error('❌ 触发器目录不存在:', triggerDirPath);
+}
+
 // 从 .env 中获取默认管理员账户信息
 const DEFAULT_ADMIN = {
     Username: process.env.ADMIN_USERNAME || 'admin',
@@ -21,9 +72,54 @@ const DEFAULT_ADMIN = {
 async function executeSQL() {
     try {
         console.log('🔧 正在执行数据库结构初始化...');
-
+        
+        // 测试数据库连接
+        const connection = await pool.getConnection();
+        console.log('✅ 数据库连接成功');
+        connection.release();
+        
+        // 执行主SQL文件中的语句
         for (const stmt of sqlStatements) {
+            console.log(`📝 正在执行 SQL 语句: ${stmt.trim().substring(0, 50)}...`);
             await pool.query(stmt);
+        }
+
+        // 如果存在drop_triggers_statement，则优先逐条执行它
+
+        // 执行触发器SQL文件中的语句
+
+        // 如果存在drop_triggers_statement，则优先逐条执行它
+        if (dropTriggersStatements.length > 0) {
+            console.log(`🗑️ 正在执行 ${dropTriggersStatements.length} 条删除触发器语句`);
+            for (const stmt of dropTriggersStatements) {
+                try {
+                    console.log(`📝 正在执行删除触发器语句: ${stmt.trim().substring(0, 50)}...`);
+                    await pool.query(stmt);
+                } catch (error) {
+                    console.warn(`⚠️ 删除触发器时发生警告: ${error.message}`);
+                }
+            }
+            console.log('✅ 所有删除触发器语句执行完毕');
+        }
+
+        // 执行触发器SQL文件中的语句
+        if (triggerStatements.length > 0) {
+            console.log(`⚡ 正在执行 ${triggerStatements.length} 个触发器文件`);
+            for (const sqlContent of triggerStatements) {
+                const lines = sqlContent.split('\n');
+                const firstLine = lines[0].trim();
+                const fileNameMatch = lines.find(line => line.includes('-- File: '));
+                const fileName = fileNameMatch ? fileNameMatch.split(':')[1].trim() : '未知文件';
+                
+                try {
+                    console.log(`📂 正在执行触发器文件: ${fileName}`);
+                    console.log(`📝 正在执行触发器语句: ${firstLine.substring(0, 50)}...`);
+                    await pool.query(sqlContent);
+                } catch (error) {
+                    console.warn(`⚠️ 创建触发器时发生警告: ${error.message}`);
+                }
+            }
+            console.log('✅ 所有触发器文件执行完毕');
         }
 
         console.log('✅ 数据库结构已成功初始化');
