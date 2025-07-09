@@ -9,6 +9,7 @@ const initializeDatabase = require('./utils/initDB');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const host = process.env.HOST || 'localhost';
 
 // 中间件
 app.use(cors());
@@ -36,6 +37,6 @@ app.use('/api', auth, apiRoutes); // 经过 auth 中间件
 // 错误处理
 app.use(errorHandler);
 
-app.listen(port, () => {
-    console.log(`服务器运行在 http://localhost:${port}`);
+app.listen(port, host, () => {
+    console.log(`服务器运行在:${host}:${port}`);
 });
