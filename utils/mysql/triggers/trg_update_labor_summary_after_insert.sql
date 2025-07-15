@@ -43,7 +43,7 @@ BEGIN
             FROM (SELECT TotalMaterials, TotalWages, OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = NEW.ProjectID) AS tmp
         ),
         TotalProfit = (
-            SELECT IFNULL(TotalIncome, 0) - (IFNULL(TotalMaterials, 0) + IFNULL(TotalWages, 0) + IFNULL(OtherExpensesTotal, 0))
+            SELECT IFNULL(TotalIncome, 0) - (IFNULL(TotalMaterials, 0) + IFNULL(total_electrician_wages, 0) + IFNULL(total_carpenter_wages, 0) + IFNULL(total_mason_wages, 0) + IFNULL(total_painter_wages, 0) + IFNULL(total_other_wages, 0) + IFNULL(OtherExpensesTotal, 0))
             FROM (SELECT TotalIncome, TotalMaterials, TotalWages, OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = NEW.ProjectID) AS tmp2
         )
     WHERE ProjectID = NEW.ProjectID;
