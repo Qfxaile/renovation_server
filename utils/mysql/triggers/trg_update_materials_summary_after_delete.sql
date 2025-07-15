@@ -14,12 +14,12 @@ BEGIN
     UPDATE ProjectSummary
     SET TotalMaterials = IFNULL(total_materials, 0),
         TotalExpenses = (
-            SELECT IFNULL(total_materials, 0) + IFNULL(ElectricianWages, 0) + IFNULL(CarpenterWages, 0) + IFNULL(MasonWages, 0) + IFNULL(PainterWages, 0) + IFNULL(OtherExpensesTotal, 0)
-            FROM (SELECT ElectricianWages, CarpenterWages, MasonWages, PainterWages, OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = OLD.ProjectID) AS tmp
+            SELECT IFNULL(total_materials, 0) + IFNULL(TotalWages, 0) + IFNULL(OtherExpensesTotal, 0)
+            FROM (SELECT TotalWages, OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = OLD.ProjectID) AS tmp
         ),
         TotalProfit = (
-            SELECT IFNULL(TotalIncome, 0) - (IFNULL(total_materials, 0) + IFNULL(ElectricianWages, 0) + IFNULL(CarpenterWages, 0) + IFNULL(MasonWages, 0) + IFNULL(PainterWages, 0) + IFNULL(OtherExpensesTotal, 0))
-            FROM (SELECT TotalIncome, ElectricianWages, CarpenterWages, MasonWages, PainterWages, OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = OLD.ProjectID) AS tmp2
+            SELECT IFNULL(TotalIncome, 0) - (IFNULL(total_materials, 0) + IFNULL(TotalWages, 0) + IFNULL(OtherExpensesTotal, 0))
+            FROM (SELECT TotalIncome, TotalWages, OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = OLD.ProjectID) AS tmp2
         )
     WHERE ProjectID = OLD.ProjectID;
 END;

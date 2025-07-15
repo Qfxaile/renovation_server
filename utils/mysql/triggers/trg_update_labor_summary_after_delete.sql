@@ -7,6 +7,7 @@ BEGIN
     DECLARE total_carpenter_wages DECIMAL(15, 2);
     DECLARE total_mason_wages DECIMAL(15, 2);
     DECLARE total_painter_wages DECIMAL(15, 2);
+    DECLARE total_other_wages DECIMAL(15, 2);
 
     -- 计算各类工人的工资
     SELECT SUM(TotalWage) INTO total_electrician_wages
@@ -25,19 +26,25 @@ BEGIN
     FROM Labor
     WHERE ProjectID = OLD.ProjectID AND LaborType = 'Painter';
 
+    SELECT SUM(TotalWage) INTO total_other_wages
+    FROM Labor
+    WHERE ProjectID = OLD.ProjectID AND LaborType = 'Other';
+
     -- 更新项目总账单
     UPDATE ProjectSummary
     SET ElectricianWages = IFNULL(total_electrician_wages, 0),
         CarpenterWages = IFNULL(total_carpenter_wages, 0),
         MasonWages = IFNULL(total_mason_wages, 0),
         PainterWages = IFNULL(total_painter_wages, 0),
-       TotalExpenses = IFNULL(total_electrician_wages, 0) + IFNULL(total_carpenter_wages, 0) + IFNULL(total_mason_wages, 0) + IFNULL(total_painter_wages, 0) + (
-            SELECT IFNULL(OtherExpensesTotal, 0) FROM (SELECT OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = OLD.ProjectID) AS tmp
+        OtherWages = IFNULL(total_other_wages, 0),
+        TotalWages = IFNULL(total_electrician_wages, 0) + IFNULL(total_carpenter_wages, 0) + IFNULL(total_mason_wages, 0) + IFNULL(total_painter_wages, 0) + IFNULL(total_other_wages, 0),
+       TotalExpenses = (
+            SELECT IFNULL(TotalMaterials, 0) + IFNULL(total_electrician_wages, 0) + IFNULL(total_carpenter_wages, 0) + IFNULL(total_mason_wages, 0) + IFNULL(total_painter_wages, 0) + IFNULL(total_other_wages, 0) + IFNULL(OtherExpensesTotal, 0)
+            FROM (SELECT TotalMaterials, TotalWages, OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = OLD.ProjectID) AS tmp
         ),
-        TotalProfit = IFNULL((SELECT IFNULL(TotalIncome, 0) FROM (SELECT TotalIncome FROM ProjectSummary WHERE ProjectID = OLD.ProjectID) AS tmp2), 0) - (
-            IFNULL(total_electrician_wages, 0) + IFNULL(total_carpenter_wages, 0) + IFNULL(total_mason_wages, 0) + IFNULL(total_painter_wages, 0) + (
-                SELECT IFNULL(OtherExpensesTotal, 0) FROM (SELECT OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = OLD.ProjectID) AS tmp
-            )
+        TotalProfit = (
+            SELECT IFNULL(TotalIncome, 0) - (IFNULL(TotalMaterials, 0) + IFNULL(TotalWages, 0) + IFNULL(OtherExpensesTotal, 0))
+            FROM (SELECT TotalIncome, TotalMaterials, TotalWages, OtherExpensesTotal FROM ProjectSummary WHERE ProjectID = OLD.ProjectID) AS tmp2
         )
     WHERE ProjectID = OLD.ProjectID;
 END;

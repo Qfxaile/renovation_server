@@ -12,7 +12,7 @@ BEGIN
     WHERE ProjectID = NEW.ProjectID;
 
     -- 计算当前项目的总支出
-    SELECT TotalMaterials + ElectricianWages + CarpenterWages + MasonWages + PainterWages + OtherExpensesTotal INTO total_expenses
+    SELECT TotalMaterials + TotalWages + OtherExpensesTotal INTO total_expenses
     FROM ProjectSummary
     WHERE ProjectID = NEW.ProjectID;
 

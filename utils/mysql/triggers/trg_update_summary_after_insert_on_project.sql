@@ -4,6 +4,6 @@ AFTER INSERT ON Projects
 FOR EACH ROW
 BEGIN
     -- 插入新的项目总结记录
-    INSERT INTO ProjectSummary (ProjectID, TotalMaterials, ElectricianWages, CarpenterWages, MasonWages, PainterWages, OtherExpensesTotal, TotalExpenses, TotalIncome, TotalProfit)
-    VALUES (NEW.ProjectID, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00);
+    INSERT INTO ProjectSummary (ProjectID, TotalMaterials, ElectricianWages, CarpenterWages, MasonWages, PainterWages, OtherWages, TotalWages, OtherExpensesTotal, TotalExpenses, TotalIncome, TotalProfit)
+    VALUES (NEW.ProjectID, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00);
 END;
