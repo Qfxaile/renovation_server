@@ -40,6 +40,25 @@ exports.getProjectById = async (req, res) => {
   }
 };
 
+exports.getProjectByUserId = async (req, res) => {
+  try {
+    console.log(`🔍 正在获取用户项目: ${req.params.userId}`); // 添加日志输出
+    const projects = await Project.getAllByUserId(req.params.userId);
+    
+    // 格式化所有项目中的日期
+    const formattedProjects = projects.map(project => ({
+      ...project,
+      StartDate: project.StartDate ? formatDate(new Date(project.StartDate)) : '',
+      EndDate: project.EndDate ? formatDate(new Date(project.EndDate)) : ''
+    }));
+    
+    res.json(formattedProjects);
+  } catch (err) {
+    console.error('❌ 获取项目列表失败:', err); // 打印完整错误堆栈
+    res.status(500).json({ error: '获取项目列表失败' });
+  }
+};
+
 exports.createProject = async (req, res) => {
   try {
     console.log('➕ 正在创建新项目:', req.body); // 添加调试日志

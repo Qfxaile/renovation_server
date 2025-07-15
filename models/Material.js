@@ -14,10 +14,10 @@ const Materials = {
         return rows[0];
     },
     create: async (data) => {
-        const { ProjectID, Date, MaterialName, Specification, Quantity, UnitPrice, TotalAmount, Notes } = data;
+        const { ProjectID, UserID, Date, MaterialName, Specification, Quantity, UnitPrice, TotalAmount, Notes } = data;
         const [result] = await pool.query(
-            'INSERT INTO Materials (ProjectID, Date, MaterialName, Specification, Quantity, UnitPrice, TotalAmount, Notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [ProjectID, Date, MaterialName, Specification, Quantity, UnitPrice, TotalAmount, Notes]
+            'INSERT INTO Materials (ProjectID, UserID, Date, MaterialName, Specification, Quantity, UnitPrice, TotalAmount, Notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [ProjectID, UserID, Date, MaterialName, Specification, Quantity, UnitPrice, TotalAmount, Notes]
         );
         return result.insertId;
     },

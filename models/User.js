@@ -56,6 +56,11 @@ const User = {
         }
     },
 
+    updatePassword: async (id, newPassword) => {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await pool.query('UPDATE Users SET Password = ? WHERE UserID = ?', [hashedPassword, id]);
+    },
+
     delete: async (id) => {
         await pool.query('DELETE FROM Users WHERE UserID = ?', [id]);
     }

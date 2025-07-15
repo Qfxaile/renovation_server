@@ -1,3 +1,4 @@
+// routes/api.js
 const express = require('express');
 const router = express.Router();
 const projectController = require('../controllers/ProjectController');
@@ -6,6 +7,7 @@ const materialsController = require('../controllers/MaterialController');
 const laborController = require('../controllers/LaborController');
 const otherExpensesController = require('../controllers/OtherExpenseController');
 const projectSummaryController = require('../controllers/ProjectSummaryController');
+const userController = require('../controllers/UserController');
 
 // Project API
 router.route('/projects')
@@ -16,6 +18,10 @@ router.route('/projects/:id')
   .get(projectController.getProjectById)
   .put(projectController.updateProject)
   .delete(projectController.deleteProject);
+
+// 添加根据UserID查询项目的API
+router.route('/projects/user/:userId')
+  .get(projectController.getProjectByUserId);
 
 // Income API
 router.route('/incomes')
@@ -75,4 +81,13 @@ router.route('/project-summary')
 
 router.route('/project-summary/:id')
   .get(projectSummaryController.getProjectSummaryById)
+
+// 添加获取单个用户信息的路由
+router.route('/users/:userId')
+  .get(userController.getUserById);
+
+// 添加修改密码的路由
+router.route('/users/:userId/change-password')
+  .post(userController.changePassword);
+
 module.exports = router;

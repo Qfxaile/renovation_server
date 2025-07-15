@@ -5,15 +5,19 @@ const Project = {
         const [rows] = await pool.query('SELECT * FROM Projects');
         return rows;
     },
+    getAllByUserId: async (userId) => {
+        const [rows] = await pool.query('SELECT * FROM Projects WHERE UserID = ?', [userId]);
+        return rows;
+    },
     getById: async (id) => {
         const [rows] = await pool.query('SELECT * FROM Projects WHERE ProjectID = ?', [id]);
         return rows[0];
     },
     create: async (data) => {
-        const { ProjectName, ProjectAddress, StartDate, EndDate, ContractAmount, ClientName, ClientContact, Notes } = data;
+        const { UserID, ProjectName, ProjectAddress, StartDate, EndDate, ContractAmount, ClientName, ClientContact, Notes } = data;
         const [result] = await pool.query(
-            'INSERT INTO Projects (ProjectName, ProjectAddress, StartDate, EndDate, ContractAmount, ClientName, ClientContact, Notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [ProjectName, ProjectAddress, StartDate, EndDate, ContractAmount, ClientName, ClientContact, Notes]
+            'INSERT INTO Projects (UserID, ProjectName, ProjectAddress, StartDate, EndDate, ContractAmount, ClientName, ClientContact, Notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [UserID, ProjectName, ProjectAddress, StartDate, EndDate, ContractAmount, ClientName, ClientContact, Notes]
         );
         return result.insertId;
     },
