@@ -22,6 +22,7 @@ exports.login = async (req, res) => {
     if (isPasswordValid) {
       // 生成JWT令牌
       const token = jwt.sign({ id: user.UserID, username: user.Username }, process.env.JWT_SECRET, {
+        algorithm: 'HS256'
       });
       console.log('登录成功:', { username: user.Username, userID: user.UserID }); // 添加登录成功日志
 
@@ -76,6 +77,13 @@ exports.verify = async (req, res) => {
 
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // 验证用户是否存在
+    const user = await User.getById(decoded.id);
+    if (!user) {
+      return res.status(401).json({ valid: false, message: '用户不存在' });
+    }
+
     // 返回解码后的用户信息，包含用户ID
     res.json({ valid: true, userId: decoded.id, username: decoded.username });
   } catch (error) {
