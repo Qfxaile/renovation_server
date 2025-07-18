@@ -1,0 +1,5 @@
+-- 添加材料明细表图片字段
+ALTER TABLE Materials ADD COLUMN Image VARCHAR(255) DEFAULT NULL COMMENT '图片链接' AFTER TotalAmount;
+
+-- 添加工人工资表图片字段
+ALTER TABLE Labor ADD COLUMN Image VARCHAR(255) DEFAULT NULL COMMENT '图片链接' AFTER TotalWage;

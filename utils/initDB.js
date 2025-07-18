@@ -30,6 +30,25 @@ if (fs.existsSync(dropTriggersFilePath)) {
     console.warn('⚠️ drop_triggers.sql 文件不存在，跳过删除现有触发器步骤');
 }
 
+// 读取 update_image.sql 文件内容
+const updateImageFilePath = path.resolve(__dirname, 'mysql', 'update.sql');
+let updateImageStatements = [];
+
+if (fs.existsSync(updateImageFilePath)) {
+    try {
+        const updateImageContent = fs.readFileSync(updateImageFilePath, 'utf8');
+        updateImageStatements = updateImageContent.split(';')
+            .map(stmt => stmt.trim())
+            .filter(stmt => stmt);
+        
+        console.log(`✅ 成功加载 ${updateImageStatements.length} 条数据库更新语句`);
+    } catch (error) {
+        console.error(`❌ 读取 update_image.sql 文件失败: ${error.message}`);
+    }
+} else {
+    console.warn('⚠️ update_image.sql 文件不存在，跳过数据库结构更新步骤');
+}
+
 // 读取 triggers 目录下的所有 SQL 文件
 const triggerDirPath = path.resolve(__dirname, 'mysql', 'triggers');
 let triggerStatements = [];
@@ -84,11 +103,22 @@ async function executeSQL() {
             await pool.query(stmt);
         }
 
-        // 如果存在drop_triggers_statement，则优先逐条执行它
+        // 如果存在updateImageStatements，并且.env中配置了UPDATE_DB=true，则执行更新
+        const shouldUpdateDB = process.env.UPDATE_DB === 'true';
+        if (updateImageStatements.length > 0 && shouldUpdateDB) {
+            console.log(`⚡ 正在根据UPDATE_DB配置执行 ${updateImageStatements.length} 条数据库结构更新语句`);
+            for (const stmt of updateImageStatements) {
+                try {
+                    console.log(`📝 正在执行更新语句: ${stmt.trim().substring(0, 50)}...`);
+                    await pool.query(stmt);
+                } catch (error) {
+                    console.warn(`⚠️ 数据库结构更新时发生警告: ${error.message}`);
+                }
+            }
+            console.log('✅ 数据库结构更新完成');
+        }
 
-        // 执行触发器SQL文件中的语句
-
-        // 如果存在drop_triggers_statement，则优先逐条执行它
+        // 如果存在dropTriggers_statement，则优先逐条执行它
         if (dropTriggersStatements.length > 0) {
             console.log(`🗑️ 正在执行 ${dropTriggersStatements.length} 条删除触发器语句`);
             for (const stmt of dropTriggersStatements) {
