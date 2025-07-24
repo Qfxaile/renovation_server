@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const formatDate = require('../utils/dateUtils');
+const bcrypt = require('bcrypt');
 
 // 获取所有用户
 exports.getAllUsers = async (req, res) => {
@@ -75,9 +76,10 @@ exports.changePassword = async (req, res) => {
 
         // 更新密码
         await User.updatePassword(userId, newPassword);
+        console.log('✅ 密码已成功更改');
         res.json({ message: '密码已成功更改' });
     } catch (error) {
-        console.error('❌ 修改密码失败:', error.message);
+        console.error('❌ 修改密码失败:', error);
         res.status(500).json({ message: '服务器错误' });
     }
 };
