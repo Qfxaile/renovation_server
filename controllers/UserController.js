@@ -6,13 +6,13 @@ const bcrypt = require('bcrypt');
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.getAll();
-        
+
         // 格式化所有用户记录中的创建时间
         const formattedUsers = users.map(user => ({
             ...user,
             CreatedAt: formatDate(new Date(user.CreatedAt))
         }));
-        
+
         res.json(formattedUsers);
     } catch (error) {
         console.error('❌ 获取用户列表失败:', error.message);
@@ -26,7 +26,7 @@ exports.getUserById = async (req, res) => {
 
     try {
         const user = await User.getById(userId);
-        
+
         if (!user) {
             console.error('❌ 用户未找到');
             return res.status(404).json({ message: '用户未找到' });
@@ -65,12 +65,14 @@ exports.changePassword = async (req, res) => {
         // 获取当前用户信息
         const user = await User.getById(userId);
         if (!user) {
+            console.error('用户未找到');
             return res.status(404).json({ message: '用户未找到' });
         }
 
         // 验证当前密码是否正确
         const isPasswordValid = await bcrypt.compare(currentPassword, user.Password);
         if (!isPasswordValid) {
+            console.error('当前密码不匹配');
             return res.status(400).json({ message: '当前密码不正确' });
         }
 
