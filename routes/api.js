@@ -8,6 +8,8 @@ const laborController = require('../controllers/LaborController');
 const otherExpensesController = require('../controllers/OtherExpenseController');
 const projectSummaryController = require('../controllers/ProjectSummaryController');
 const userController = require('../controllers/UserController');
+const accountBookController = require('../controllers/AccountBookController');
+const accountEntryController = require('../controllers/AccountEntryController');
 
 // Project API
 router.route('/projects')
@@ -89,5 +91,41 @@ router.route('/users/:userId')
 // 添加修改密码的路由
 router.route('/users/:userId/change-password')
   .post(userController.changePassword);
+
+// AccountBook API
+router.route('/account-books')
+  .get(accountBookController.getAllAccountBooks)
+  .post(accountBookController.createAccountBook);
+
+router.route('/account-books/:bookId')
+  .get(accountBookController.getAccountBookById)
+  .put(accountBookController.updateAccountBook)
+  .delete(accountBookController.deleteAccountBook);
+
+// 添加根据UserID查询流水账的API
+router.route('/account-books/user/:userId')
+  .get(accountBookController.getAccountBooksByUserId);
+
+// AccountEntry API
+router.route('/account-entries')
+  .get(accountEntryController.getAllAccountEntries)
+  .post(accountEntryController.createAccountEntry);
+
+router.route('/account-entries/:entryId')
+  .get(accountEntryController.getAccountEntryById)
+  .put(accountEntryController.updateAccountEntry)
+  .delete(accountEntryController.deleteAccountEntry);
+
+// 添加根据BookID查询流水账记录的API
+router.route('/account-entries/book/:bookId')
+  .get(accountEntryController.getAccountEntriesByBookId);
+
+// 添加根据UserID查询流水账记录的API
+router.route('/account-entries/user/:userId')
+  .get(accountEntryController.getAccountEntriesByUserId);
+
+// 添加根据用户ID和年份获取总收入和总支出的路由
+router.route('/account-entries/user/:userId/year/:year')
+  .get(accountEntryController.getAccountSummaryByUserIdAndYear);
 
 module.exports = router;
